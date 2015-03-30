@@ -82,8 +82,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\meng.h" />
+    <ClInclude Include="src\common.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\meng.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

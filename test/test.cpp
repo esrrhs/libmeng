@@ -1,5 +1,6 @@
 #include "../include/meng.h"
 #include <stdio.h>
+#include <iostream>
 
 void func1(meng * m, void * arg)
 {
@@ -30,6 +31,10 @@ int main(int argc, const char * argv[])
 	}
 	meng_delete(m1);
 	meng_delete(m2);
+
+	char c;
+	std::cin >> c;
+
 	return 0;
 }
 
