@@ -3,18 +3,24 @@
 
 MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 {
-	meng * ret = (meng *)MMALLOC(sizeof(meng) + stacksize);
+	size_t size = sizeof(meng) + CONTEXT_SIZE * 2 + stacksize;
+	meng * ret = (meng *)MMALLOC(size);
+	memset(ret, 0, size);
 	ret->arg = arg;
 	ret->func = func;
-	ret->stack = (char *)ret + sizeof(meng);
+	ret->father_context = (char *)ret + sizeof(meng);
+	ret->last_context = (char *)ret + sizeof(meng) + CONTEXT_SIZE;
+	ret->stack = (char *)ret + sizeof(meng) + CONTEXT_SIZE + CONTEXT_SIZE;
 	ret->stacksize = stacksize;
 	ret->status = ms_start;
 	return ret;
 }
 
+// 跳转到新m执行，上下文保存到m中，同时把旧的m的上下文取出
 MENG_API void meng_run(meng * m)
 {
-	(m->func)(m, m->arg);
+	// 保存上下文
+	swap_context(m->father_context, m->last_context);
 	m->status = ms_end;
 }
 
