@@ -13,6 +13,14 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 	ret->stack = (char *)ret + sizeof(meng) + CONTEXT_SIZE + CONTEXT_SIZE;
 	ret->stacksize = stacksize;
 	ret->status = ms_start;
+
+	// 设置初始值
+	int * sp = (int*)(ret->stack + stacksize);
+	sp -= 1; // arg
+	*--sp = 0; // return
+	*(int *)(ret->last_context + 32) = (int)func;
+	*(int *)(ret->last_context + 24) = (int)sp;
+
 	return ret;
 }
 
@@ -36,5 +44,6 @@ MENG_API void meng_delete(meng * m)
 
 MENG_API void meng_yield(meng * m)
 {
-
+	// 保存上下文
+	swap_context(m->last_context, m->father_context);
 }
