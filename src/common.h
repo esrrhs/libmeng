@@ -8,7 +8,6 @@
 enum meng_status
 {
 	ms_start,
-	ms_pause,
 	ms_end,
 };
 
@@ -21,6 +20,7 @@ struct meng
 	char * stack;
 	size_t stacksize;
 	void * arg;
+	meng * father;
 };
 
 #define CONTEXT_SIZE (100)
