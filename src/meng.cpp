@@ -14,9 +14,13 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 	ret->stacksize = stacksize;
 	ret->status = ms_start;
 
+	ini_context(ret->last_context);
+
 	// ÉèÖÃ³õÊ¼Öµ
 	int * sp = (int*)(ret->stack + stacksize);
-	sp -= 1; // arg
+	sp -= 2; // arg
+	*sp = (int)ret;
+	*(sp + 1) = (int)arg;
 	*--sp = 0; // return
 	*(int *)(ret->last_context + 32) = (int)func;
 	*(int *)(ret->last_context + 24) = (int)sp;
