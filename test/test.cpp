@@ -22,8 +22,8 @@ void func2(meng * m, void * arg)
 
 int main(int argc, const char * argv[])
 {
-	meng * m1 = meng_create(func1, 8 * 1024, 0);
-	meng * m2 = meng_create(func2, 8 * 1024, 0);
+	meng * m1 = meng_create(func1, 8 * 1024, (void*)1);
+	meng * m2 = meng_create(func2, 8 * 1024, (void*)2);
 	while (!meng_end(m1) && !meng_end(m2))
 	{
 		meng_run(m1);
