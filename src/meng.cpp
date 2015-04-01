@@ -1,5 +1,14 @@
 #include "meng.h"
 #include "common.h"
+#include <assert.h>
+
+meng * g_running = 0;
+void on_meng_main_quit()
+{
+	assert(g_running);
+	g_running->status = ms_end;
+	swap_context(g_running->last_context, g_running->father_context);
+}
 
 MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 {
@@ -13,6 +22,7 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 	ret->stack = (char *)ret + sizeof(meng) + CONTEXT_SIZE + CONTEXT_SIZE;
 	ret->stacksize = stacksize;
 	ret->status = ms_start;
+	ret->father = g_running;
 
 	ini_context(ret->last_context);
 
@@ -21,7 +31,7 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 	sp -= 2; // arg
 	*sp = (int)ret;
 	*(sp + 1) = (int)arg;
-	*--sp = 0; // return
+	*--sp = (int)on_meng_main_quit; // return
 	*(int *)(ret->last_context + 32) = (int)func;
 	*(int *)(ret->last_context + 24) = (int)sp;
 
@@ -31,9 +41,12 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 // 跳转到新m执行，上下文保存到m中，同时把旧的m的上下文取出
 MENG_API void meng_run(meng * m)
 {
-	// 保存上下文
-	swap_context(m->father_context, m->last_context);
-	m->status = ms_end;
+	if (m->status == ms_start)
+	{
+		g_running = m;
+		swap_context(m->father_context, m->last_context);
+		g_running = m->father;
+	}
 }
 
 MENG_API bool meng_end(meng * m)
@@ -48,6 +61,5 @@ MENG_API void meng_delete(meng * m)
 
 MENG_API void meng_yield(meng * m)
 {
-	// 保存上下文
 	swap_context(m->last_context, m->father_context);
 }
