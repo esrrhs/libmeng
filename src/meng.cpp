@@ -27,13 +27,13 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 	ini_context(ret->last_context);
 
 	// ÉèÖÃ³õÊ¼Öµ
-	int * sp = (int*)(ret->stack + stacksize);
+	long * sp = (long*)(ret->stack + stacksize);
 	sp -= 2; // arg
-	*sp = (int)ret;
-	*(sp + 1) = (int)arg;
-	*--sp = (int)on_meng_main_quit; // return
-	*(int *)(ret->last_context + 32) = (int)func;
-	*(int *)(ret->last_context + 24) = (int)sp;
+	*sp = (long)ret;
+	*(sp + 1) = (long)arg;
+	*--sp = (long)on_meng_main_quit; // return
+	*(long *)(ret->last_context + 32) = (long)func;
+	*(long *)(ret->last_context + 24) = (long)sp;
 
 	return ret;
 }
