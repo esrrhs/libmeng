@@ -1,17 +1,34 @@
-libmengÊÇÒ»¸ö¿çÆ½Ì¨µÄÇáÁ¿¼¶Ğ­³Ì¿â
+libmengæ˜¯ä¸€ä¸ªè·¨å¹³å°çš„è½»é‡çº§åç¨‹åº“
 
-ÊÔÓÃÊ¾Àı£º
-	// ´´½¨Á½¸öĞ­³Ì£¬Ö¸¶¨º¯ÊıÈë¿Ú¡¢¶ÑÕ»´óĞ¡¼°²ÎÊı
-	meng * m1 = meng_create(func1, 8 * 1024, (void*)1);
-	meng * m2 = meng_create(func2, 8 * 1024, (void*)2);
+è¯•ç”¨ç¤ºä¾‹ï¼š
+
+// åç¨‹å…¥å£
+void func(meng * m, void * arg)
+{
+	for (int i = 0; i < 10; i++)
+	{
+		printf("func %p %d\n", arg, i); 
+		// ä¸»åŠ¨åˆ‡æ¢
+		meng_yield(m);
+	}
+}
+
+int main(int argc, const char * argv[])
+{
+	// åˆ›å»ºä¸¤ä¸ªåç¨‹ï¼ŒæŒ‡å®šå‡½æ•°å…¥å£ã€å †æ ˆå¤§å°åŠå‚æ•°
+	meng * m1 = meng_create(func, 8 * 1024, (void*)1);
+	meng * m2 = meng_create(func, 8 * 1024, (void*)2);
 	
-	// Ñ­»·Ö´ĞĞÁ½¸öĞ­³Ì
+	// å¾ªç¯æ‰§è¡Œä¸¤ä¸ªåç¨‹
 	while (!meng_end(m1) || !meng_end(m2))
 	{
 		meng_run(m1);
 		meng_run(m2);
 	}
 	
-	// Ïú»Ù
+	// é”€æ¯
 	meng_delete(m1);
 	meng_delete(m2);
+
+	return 0;
+}
