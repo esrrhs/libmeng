@@ -20,7 +20,6 @@ struct meng
 	char * stack;
 	size_t stacksize;
 	void * arg;
-	meng * father;
 };
 
 // save old, load new
@@ -28,6 +27,9 @@ extern "C" void swap_context(char * old_context, char * new_context);
 
 // ini
 extern "C" void ini_context(char * context);
+
+// get base stack
+extern "C" void * get_rbp();
 
 #ifdef WIN32
 #define CONTEXT_SIZE (52)
