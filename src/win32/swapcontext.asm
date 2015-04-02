@@ -74,12 +74,12 @@ ini_context PROC
 
 ini_context ENDP
 
-get_rbp PROC
+get_meng PROC
 
-	mov		eax,	ebp
+	mov		eax,	dword ptr [ebp+4]
 
 	ret 
 
-get_rbp ENDP
+get_meng ENDP
 
 end
