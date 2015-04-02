@@ -20,6 +20,7 @@ struct meng
 	char * stack;
 	size_t stacksize;
 	void * arg;
+	int magic;
 };
 
 // save old, load new
