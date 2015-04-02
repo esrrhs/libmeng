@@ -32,6 +32,16 @@ swap_context PROC
 	mov		word ptr [eax+44], DS
 	mov		word ptr [eax+48], FS
 	
+	;; SSE
+	movss	dword ptr [eax+52], XMM0
+	movss	dword ptr [eax+56], XMM1
+	movss	dword ptr [eax+60], XMM2
+	movss	dword ptr [eax+64], XMM3
+	movss	dword ptr [eax+68], XMM4
+	movss	dword ptr [eax+72], XMM5
+	movss	dword ptr [eax+76], XMM6
+	movss	dword ptr [eax+80], XMM7
+
 	mov		ECX,	EAX
 	pop		EAX
 	mov		dword ptr [ECX+0],  EAX
@@ -51,6 +61,16 @@ swap_context PROC
 	mov		ES,		word ptr [ecx+40]
 	mov		DS,		word ptr [ecx+44]
 	mov		SS,		word ptr [ecx+36]
+	
+	;; SSE
+	movss	XMM0, dword ptr [ecx+52]
+	movss	XMM1, dword ptr [ecx+56]
+	movss	XMM2, dword ptr [ecx+60]
+	movss	XMM3, dword ptr [ecx+64]
+	movss	XMM4, dword ptr [ecx+68]
+	movss	XMM5, dword ptr [ecx+72]
+	movss	XMM6, dword ptr [ecx+76]
+	movss	XMM7, dword ptr [ecx+80]
 
 	push	dword ptr [ecx+32]
 	mov		ECX,  dword ptr [ecx+8]

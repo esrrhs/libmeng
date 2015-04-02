@@ -31,6 +31,15 @@ swap_context:
 	mov		%r14, 120(%rdi)
 	mov		%r15, 128(%rdi)
 	
+	movups	%xmm0,  136(%rdi)
+	movups	%xmm1,  152(%rdi)
+	movups	%xmm2,  168(%rdi)
+	movups	%xmm3,  184(%rdi)
+	movups	%xmm4,  200(%rdi)
+	movups	%xmm5,  216(%rdi)
+	movups	%xmm6,  232(%rdi)
+	movups	%xmm7,  248(%rdi)
+	
 	/* load */ 
 	mov		(%rsi),		%RAX  
 	mov		8(%rsi),    %RBX  
@@ -48,6 +57,15 @@ swap_context:
 	mov		112(%rsi),  %r13
 	mov		120(%rsi),  %r14
 	mov		128(%rsi),  %r15
+	
+	movups	136(%rdi),  %xmm0
+	movups	152(%rdi),  %xmm1
+	movups	168(%rdi),  %xmm2
+	movups	184(%rdi),  %xmm3
+	movups	200(%rdi),  %xmm4
+	movups	216(%rdi),  %xmm5
+	movups	232(%rdi),  %xmm6
+	movups	248(%rdi),  %xmm7
 	
 	push	64(%rsi) 
 	mov		32(%rsi),   %RSI

@@ -32,14 +32,14 @@ extern "C" void ini_context(char * context);
 extern "C" meng * get_meng();
 
 #ifdef WIN32
-#define CONTEXT_SIZE (52)
+#define CONTEXT_SIZE (84)
 #define CONTEXT_RIP_POS (32)
 #define CONTEXT_RBP_POS (28)
 #define CONTEXT_RSP_POS (24)
 #define CONTEXT_RDI_POS (20)
 #define CONTEXT_RSI_POS (16)
 #else
-#define CONTEXT_SIZE (136)
+#define CONTEXT_SIZE (264)
 #define CONTEXT_RIP_POS (64)
 #define CONTEXT_RBP_POS (56)
 #define CONTEXT_RSP_POS (48)
