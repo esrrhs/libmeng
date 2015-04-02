@@ -74,4 +74,12 @@ ini_context PROC
 
 ini_context ENDP
 
+get_rbp PROC
+
+	mov		eax,	ebp
+
+	ret 
+
+get_rbp ENDP
+
 end

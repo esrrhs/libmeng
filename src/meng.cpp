@@ -2,12 +2,12 @@
 #include "common.h"
 #include <assert.h>
 
-meng * g_running = 0;
 void on_meng_main_quit()
 {
-	assert(g_running);
-	g_running->status = ms_end;
-	swap_context(g_running->last_context, g_running->father_context);
+	meng * p = (meng *)(*((long *)get_rbp() + 1));
+	assert(p);
+	p->status = ms_end;
+	swap_context(p->last_context, p->father_context);
 }
 
 MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
@@ -22,7 +22,6 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 	ret->stack = (char *)ret + sizeof(meng) + CONTEXT_SIZE + CONTEXT_SIZE;
 	ret->stacksize = stacksize;
 	ret->status = ms_start;
-	ret->father = g_running;
 
 	ini_context(ret->last_context);
 
@@ -45,9 +44,7 @@ MENG_API void meng_run(meng * m)
 {
 	if (m->status == ms_start)
 	{
-		g_running = m;
 		swap_context(m->father_context, m->last_context);
-		g_running = m->father;
 	}
 }
 
