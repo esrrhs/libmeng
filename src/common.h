@@ -33,8 +33,12 @@ extern "C" void ini_context(char * context);
 #define CONTEXT_SIZE (52)
 #define CONTEXT_IP_POS (32)
 #define CONTEXT_SP_POS (24)
+#define CONTEXT_RDI_POS (20)
+#define CONTEXT_RSI_POS (16)
 #else
 #define CONTEXT_SIZE (136)
 #define CONTEXT_IP_POS (64)
 #define CONTEXT_SP_POS (48)
+#define CONTEXT_RDI_POS (40)
+#define CONTEXT_RSI_POS (32)
 #endif
