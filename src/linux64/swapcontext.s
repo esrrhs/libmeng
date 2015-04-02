@@ -59,4 +59,9 @@ ini_context:
 
 	ret 
 	
-	
+.globl get_meng
+get_meng:
+
+	mov		8(%rbp),	%rax
+	ret 
+
