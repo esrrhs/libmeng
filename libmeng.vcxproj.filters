@@ -6,7 +6,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\meng.cpp" />
-    <ClCompile Include="src\common.cpp" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="src\win32\swapcontext.asm" />

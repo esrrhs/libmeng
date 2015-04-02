@@ -98,7 +98,6 @@
     <ClInclude Include="src\common.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\meng.cpp" />
   </ItemGroup>
   <ItemGroup>
