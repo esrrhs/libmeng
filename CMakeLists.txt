@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 PROJECT(MENG)
 ENABLE_LANGUAGE(CXX ASM)
-SET(MENG_SRC_LIST ./src/meng.cpp ./src/common.cpp ./src/linux64/swapcontext.s)
+SET(MENG_SRC_LIST ./src/meng.cpp ./src/linux64/swapcontext.s)
 INCLUDE_DIRECTORIES(./include)
 INCLUDE_DIRECTORIES(./src)
 MESSAGE(STATUS "This is cmdcontroller BINARY dir " ${MENG_BINARY_DIR})
