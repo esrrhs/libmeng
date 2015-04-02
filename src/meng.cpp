@@ -7,7 +7,7 @@ void on_meng_main_quit()
 	meng * p = get_meng();
 	assert(p);
 	p->status = ms_end;
-	assert(p->magic == 0xDEADBEEF);
+	assert(p->magic == (int)0xDEADBEEF);
 	swap_context(p->last_context, p->father_context);
 }
 
