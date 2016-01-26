@@ -13,12 +13,12 @@
 #define LOOP_NUM 10
 #endif
 
-void func(meng * m, void * arg)
+void func(meng * m, void * arg, size_t argsize)
 {
 	for (int i = 0; i < LOOP_NUM; i++)
 	{
 #ifdef _DEBUG
-		printf("func %p %d\n", arg, i); 
+		printf("func %d %d\n", *(int*)arg, i); 
 #endif
 		meng_yield(m);
 	}
@@ -26,8 +26,10 @@ void func(meng * m, void * arg)
 
 int main(int argc, const char * argv[])
 {
-	meng * m1 = meng_create(func, 8 * 1024, (void*)1);
-	meng * m2 = meng_create(func, 8 * 1024, (void*)2);
+	int arg1 = 1;
+	int arg2 = 2;
+	meng * m1 = meng_create(func, 8 * 1024, &arg1, sizeof(arg1));
+	meng * m2 = meng_create(func, 8 * 1024, &arg2, sizeof(arg2));
 
 	unsigned int begin,end;
 
