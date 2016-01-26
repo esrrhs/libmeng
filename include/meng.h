@@ -13,10 +13,10 @@
 struct meng;
 
 // 入口
-typedef void(*meng_main)(meng * m, void * arg);
+typedef void(*meng_main)(meng * m, void * arg, size_t argsize);
 
 // 创建一个协程
-MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg);
+MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg, size_t argsize);
 
 // 执行协程
 MENG_API void meng_run(meng * m);

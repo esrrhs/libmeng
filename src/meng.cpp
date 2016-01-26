@@ -11,16 +11,17 @@ void on_meng_main_quit()
 	swap_context(p->last_context, p->father_context);
 }
 
-MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
+MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg, size_t argsize)
 {
-	size_t size = sizeof(meng) + stacksize + CONTEXT_SIZE * 2;
+	size_t wrapargsize = (argsize + 7) / 8 * 8;
+	size_t size = sizeof(meng) + wrapargsize + stacksize + CONTEXT_SIZE * 2;
 	meng * ret = (meng *)MMALLOC(size);
 	memset(ret, 0, size);
-	ret->arg = arg;
+	memcpy((char *)ret + sizeof(meng), arg, argsize);
 	ret->func = func;
-	ret->stack = (char *)ret + sizeof(meng);
-	ret->father_context = (char *)ret + sizeof(meng) + stacksize;
-	ret->last_context = (char *)ret + sizeof(meng) + stacksize + CONTEXT_SIZE;
+	ret->stack = (char *)ret + sizeof(meng) + wrapargsize;
+	ret->father_context = (char *)ret + sizeof(meng) + wrapargsize + stacksize;
+	ret->last_context = (char *)ret + sizeof(meng) + wrapargsize + stacksize + CONTEXT_SIZE;
 	ret->stacksize = stacksize;
 	ret->status = ms_start;
 	ret->magic = 0xDEADBEEF;
@@ -29,9 +30,10 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg)
 
 	// ÉèÖÃ³õÊ¼Öµ
 	long * sp = (long*)(ret->stack + stacksize);
-	sp -= 2; // arg
+	sp -= 3; // arg
 	*sp = (long)ret;
-	*(sp + 1) = (long)arg;
+	*(sp + 1) = (long)((char *)ret + sizeof(meng));
+	*(sp + 2) = (long)argsize;
 	*--sp = (long)on_meng_main_quit; // return
 	*(long *)(ret->last_context + CONTEXT_RIP_POS) = (long)func;
 	*(long *)(ret->last_context + CONTEXT_RBP_POS) = (long)sp;
