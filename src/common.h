@@ -39,6 +39,7 @@ extern "C" meng * get_meng();
 #define CONTEXT_RSP_POS (24)
 #define CONTEXT_RDI_POS (20)
 #define CONTEXT_RSI_POS (16)
+#define CONTEXT_RDX_POS (12)
 #else
 #define CONTEXT_SIZE (264)
 #define CONTEXT_RIP_POS (64)
@@ -46,4 +47,5 @@ extern "C" meng * get_meng();
 #define CONTEXT_RSP_POS (48)
 #define CONTEXT_RDI_POS (40)
 #define CONTEXT_RSI_POS (32)
+#define CONTEXT_RDX_POS (24)
 #endif
