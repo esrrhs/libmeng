@@ -1,6 +1,11 @@
+# libmeng #
 **libmeng**是一个跨平台的轻量级协程库，可以轻松创建协程及RPC
 
-试用示例：
+## 示例 ##
+
+```
+#!c++
+
 
 // 协程入口
 void func(meng * m, void * arg, size_t argsize)
@@ -33,3 +38,4 @@ int main(int argc, const char * argv[])
 
 	return 0;
 }
+```
