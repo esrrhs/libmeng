@@ -38,8 +38,9 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, void * arg, size_t
 	*(long *)(ret->last_context + CONTEXT_RIP_POS) = (long)func;
 	*(long *)(ret->last_context + CONTEXT_RBP_POS) = (long)sp;
 	*(long *)(ret->last_context + CONTEXT_RSP_POS) = (long)sp;
-	*(long *)(ret->last_context + CONTEXT_RDI_POS) = (long)ret;
-	*(long *)(ret->last_context + CONTEXT_RSI_POS) = (long)arg;
+	*(long *)(ret->last_context + CONTEXT_RDI_POS) = *sp;
+	*(long *)(ret->last_context + CONTEXT_RSI_POS) = *(sp + 1);
+	*(long *)(ret->last_context + CONTEXT_RDX_POS) = *(sp + 2);
 
 	return ret;
 }
