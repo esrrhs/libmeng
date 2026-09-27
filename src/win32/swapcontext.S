@@ -1,8 +1,10 @@
 .text
-.globl _swap_context
 .globl swap_context
+.globl _swap_context
+#if defined(_WIN32)
 .def _swap_context; .scl 2; .type 32; .endef
 .def swap_context; .scl 2; .type 32; .endef
+#endif
 _swap_context:
 swap_context:
 	movl	4(%esp), %eax   /* old_context */
@@ -29,10 +31,12 @@ swap_context:
 
 	ret
 
-.globl _ini_context
 .globl ini_context
+.globl _ini_context
+#if defined(_WIN32)
 .def _ini_context; .scl 2; .type 32; .endef
 .def ini_context; .scl 2; .type 32; .endef
+#endif
 _ini_context:
 ini_context:
 	ret

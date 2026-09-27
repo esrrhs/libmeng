@@ -14,7 +14,7 @@
 - **Cross-Platform & Multi-Architecture**:
   - **Linux**: x86_64, aarch64 / ARM64 (GCC, Clang)
   - **Windows**: x86_64, x86 (MinGW-w64)
-  - **macOS**: x86_64, Apple Silicon (ARM64)
+  - **macOS**: Apple Silicon (ARM64), Intel (x86_64) (Apple Clang)
 - **Dual API Design**:
   - **Pure C API** (`meng.h`): Minimal, zero dependencies, ABI stable, and 100% backward compatible.
   - **Modern C++ API** (`meng.hpp`): C++11/14/17/20 ready, featuring RAII resource management, lambda closures with variable captures, exception propagation across coroutines, and move semantics.

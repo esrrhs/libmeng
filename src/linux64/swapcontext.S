@@ -1,7 +1,11 @@
 .text
 .globl swap_context
+.globl _swap_context
+#if defined(__ELF__)
 .type swap_context, @function
+#endif
 swap_context:
+_swap_context:
 
 	/* rdi = old_context, rsi = new_context */
 
@@ -80,8 +84,12 @@ swap_context:
 	retq
 
 .globl ini_context
+.globl _ini_context
+#if defined(__ELF__)
 .type ini_context, @function
+#endif
 ini_context:
+_ini_context:
 	retq
 
 #if defined(__linux__) && defined(__ELF__)
