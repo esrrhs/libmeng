@@ -1,0 +1,34 @@
+# Build artifacts
+build/
+bin/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+Testing/
+*.cmake
+
+# Profiler & test output
+*.prof
+*.log
+log.txt
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosv
+*.sln.docstates
+x64/
+Debug/
+Release/
