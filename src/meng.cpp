@@ -88,6 +88,11 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, const void * arg, 
 	*(long long *)(ret->last_context + CONTEXT_RIP_POS) = (long long)meng_trampoline;
 	*(long long *)(ret->last_context + CONTEXT_RSP_POS) = (long long)sp;
 	*(long long *)(ret->last_context + CONTEXT_RBP_POS) = (long long)sp;
+
+	// Windows x64 TEB StackBase, StackLimit, DeallocationStack
+	*(uintptr_t *)(ret->last_context + 240) = (uintptr_t)(ret->stack + stacksize);
+	*(uintptr_t *)(ret->last_context + 248) = (uintptr_t)(ret->stack);
+	*(uintptr_t *)(ret->last_context + 256) = (uintptr_t)(ret->stack);
 	#else
 	// Windows x86 32-bit
 	uintptr_t sp = (uintptr_t)(ret->stack + stacksize);
@@ -96,6 +101,10 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, const void * arg, 
 	*(long *)(ret->last_context + CONTEXT_RIP_POS) = (long)meng_trampoline;
 	*(long *)(ret->last_context + CONTEXT_RSP_POS) = (long)sp;
 	*(long *)(ret->last_context + CONTEXT_RBP_POS) = (long)sp;
+
+	// Windows x86 TEB StackBase and StackLimit
+	*(uint32_t *)(ret->last_context + 24) = (uint32_t)(uintptr_t)(ret->stack + stacksize);
+	*(uint32_t *)(ret->last_context + 28) = (uint32_t)(uintptr_t)(ret->stack);
 	#endif
 #elif defined(__x86_64__) || defined(_M_X64)
 	// Linux / macOS System V AMD64 ABI:

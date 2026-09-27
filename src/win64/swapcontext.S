@@ -40,6 +40,14 @@ _swap_context:
 	movdqu	%xmm14, 208(%rcx)
 	movdqu	%xmm15, 224(%rcx)
 
+	/* Save Windows TEB StackBase, StackLimit, and DeallocationStack */
+	movq	%gs:0x08, %rax
+	movq	%rax, 240(%rcx)
+	movq	%gs:0x10, %rax
+	movq	%rax, 248(%rcx)
+	movq	%gs:0x1478, %rax
+	movq	%rax, 256(%rcx)
+
 	/* Restore from new_context (rdx) */
 	movq	0(%rdx),  %rbx
 	movq	8(%rdx),  %rbp
@@ -60,6 +68,14 @@ _swap_context:
 	movdqu	192(%rdx), %xmm13
 	movdqu	208(%rdx), %xmm14
 	movdqu	224(%rdx), %xmm15
+
+	/* Restore Windows TEB StackBase, StackLimit, and DeallocationStack */
+	movq	240(%rdx), %rax
+	movq	%rax, %gs:0x08
+	movq	248(%rdx), %rax
+	movq	%rax, %gs:0x10
+	movq	256(%rdx), %rax
+	movq	%rax, %gs:0x1478
 
 	/* Restore stack pointer */
 	movq	64(%rdx), %rsp
