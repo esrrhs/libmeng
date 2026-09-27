@@ -1,5 +1,7 @@
 # libmeng
 
+[![CI](https://github.com/esrrhs/libmeng/actions/workflows/ci.yml/badge.svg)](https://github.com/esrrhs/libmeng/actions/workflows/ci.yml)
+
 [English](README.md) | [中文](README_ZH.md)
 
 **libmeng** is a lightweight, ultra-fast, cross-platform coroutine / fiber library written in C and modern C++. Designed for high-performance concurrent systems, it provides ultra-low latency context switching (~25 ns) and supports tens of millions of concurrent coroutines.
@@ -10,8 +12,8 @@
 
 - **Blazing Fast Context Switching**: Handcrafted lightweight assembly switching achieves latency down to **~25 ns** per context switch and a throughput of **~40 million switches/sec**.
 - **Cross-Platform & Multi-Architecture**:
-  - **Linux**: x86_64, aarch64 / ARM64
-  - **Windows**: x86 (Win32), x64 (Win64)
+  - **Linux**: x86_64, aarch64 / ARM64 (GCC, Clang)
+  - **Windows**: x86_64, x86 (MinGW-w64)
   - **macOS**: x86_64, Apple Silicon (ARM64)
 - **Dual API Design**:
   - **Pure C API** (`meng.h`): Minimal, zero dependencies, ABI stable, and 100% backward compatible.
