@@ -1,5 +1,7 @@
 # libmeng
 
+[![CI](https://github.com/esrrhs/libmeng/actions/workflows/ci.yml/badge.svg)](https://github.com/esrrhs/libmeng/actions/workflows/ci.yml)
+
 [English](README.md) | [中文](README_ZH.md)
 
 **libmeng** 是一个高性能、跨平台的轻量级协程库（Fiber / Coroutine），支持单机千万级高并发协程调度与低延迟上下文切换。
@@ -10,8 +12,8 @@
 
 - **极速上下文切换**：基于手写轻量汇编，单次上下文切换延迟仅 **~25 ns**，吞吐量可达 **~4000 万次/秒**。
 - **跨平台与多架构支持**：
-  - Linux (x86_64, aarch64 / ARM64)
-  - Windows (x86, x64)
+  - Linux (x86_64, aarch64 / ARM64, GCC / Clang)
+  - Windows (x86_64, x86, MinGW-w64)
   - macOS (x86_64, Apple Silicon / ARM64)
 - **双重 API 接口**：
   - **原生 C API** (`meng.h`)：极简、零依赖、100% 向后兼容。

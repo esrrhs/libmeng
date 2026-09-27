@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  linux:
+    name: Linux (${{ matrix.compiler }} - ${{ matrix.build_type }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+        build_type: [Debug, Release]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Clang environment
+        if: matrix.compiler == 'clang'
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+
+      - name: Configure CMake
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DMENG_BUILD_TESTS=ON \
+            -DMENG_BUILD_BENCHMARKS=ON
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+      - name: Run Tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Run Benchmark
+        if: matrix.build_type == 'Release'
+        run: ./build/bin/benchmark
+
+  windows-mingw:
+    name: Windows MinGW-w64 (${{ matrix.build_type }})
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSYS2 MinGW-w64
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+
+      - name: Configure CMake
+        shell: msys2 {0}
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DMENG_BUILD_TESTS=ON \
+            -DMENG_BUILD_BENCHMARKS=ON
+
+      - name: Build
+        shell: msys2 {0}
+        run: cmake --build build
+
+      - name: Run Tests
+        shell: msys2 {0}
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Run Benchmark
+        if: matrix.build_type == 'Release'
+        shell: msys2 {0}
+        run: ./build/bin/benchmark.exe

@@ -21,6 +21,17 @@ extern "C" void on_meng_main_quit()
 	swap_context(p->last_context, p->father_context);
 }
 
+static void meng_trampoline()
+{
+	meng * m = g_current_meng;
+	assert(m);
+	if (m->func)
+	{
+		m->func(m, m->arg, m->argsize);
+	}
+	on_meng_main_quit();
+}
+
 MENG_API meng * meng_create(meng_main func, size_t stacksize, const void * arg, size_t argsize)
 {
 	if (!func)
@@ -68,50 +79,49 @@ MENG_API meng * meng_create(meng_main func, size_t stacksize, const void * arg, 
 
 	ini_context(ret->last_context);
 
-#if defined(__x86_64__) || defined(_M_X64)
-#if !defined(_WIN32)
-	// Linux / System V AMD64 ABI:
+#if defined(_WIN32)
+	#if defined(__x86_64__) || defined(_M_X64)
+	// Windows x64 ABI: 16-byte aligned stack + 32-byte shadow space
+	uintptr_t sp = (uintptr_t)(ret->stack + stacksize);
+	sp = (sp & ~0xFULL) - 40;
+
+	*(long long *)(ret->last_context + CONTEXT_RIP_POS) = (long long)meng_trampoline;
+	*(long long *)(ret->last_context + CONTEXT_RSP_POS) = (long long)sp;
+	*(long long *)(ret->last_context + CONTEXT_RBP_POS) = (long long)sp;
+	#else
+	// Windows x86 32-bit
+	uintptr_t sp = (uintptr_t)(ret->stack + stacksize);
+	sp = (sp & ~0xFULL) - 16;
+
+	*(long *)(ret->last_context + CONTEXT_RIP_POS) = (long)meng_trampoline;
+	*(long *)(ret->last_context + CONTEXT_RSP_POS) = (long)sp;
+	*(long *)(ret->last_context + CONTEXT_RBP_POS) = (long)sp;
+	#endif
+#elif defined(__x86_64__) || defined(_M_X64)
+	// Linux / macOS System V AMD64 ABI:
 	// Stack grows downward.
 	// Function entry requirement: (%rsp + 8) % 16 == 0.
 	uintptr_t sp = (uintptr_t)(ret->stack + stacksize);
 	sp = (sp & ~0xFULL) - 8;
-	*(uintptr_t *)sp = (uintptr_t)on_meng_main_quit; // Return address when func finishes
 
-	*(long *)(ret->last_context + CONTEXT_RIP_POS) = (long)func;
+	*(long *)(ret->last_context + CONTEXT_RIP_POS) = (long)meng_trampoline;
 	*(long *)(ret->last_context + CONTEXT_RSP_POS) = (long)sp;
 	*(long *)(ret->last_context + CONTEXT_RBP_POS) = (long)sp;
-	*(long *)(ret->last_context + CONTEXT_RDI_POS) = (long)ret;
-	*(long *)(ret->last_context + CONTEXT_RSI_POS) = (long)ret->arg;
-	*(long *)(ret->last_context + CONTEXT_RDX_POS) = (long)argsize;
-#else
-	// Windows x64 ABI
-	uintptr_t sp = (uintptr_t)(ret->stack + stacksize);
-	sp = (sp & ~0xFULL) - 40; // 32 bytes shadow space + 8 bytes return address
-	*(uintptr_t *)(sp + 32) = (uintptr_t)on_meng_main_quit;
-
-	*(long long *)(ret->last_context + CONTEXT_RIP_POS) = (long long)func;
-	*(long long *)(ret->last_context + CONTEXT_RSP_POS) = (long long)sp;
-	*(long long *)(ret->last_context + CONTEXT_RBP_POS) = (long long)sp;
-#endif
-#elif defined(WIN32) || defined(__i386__) || defined(_M_IX86)
-	// 32-bit x86 cdecl
-	long * sp = (long *)(ret->stack + stacksize);
-	sp -= 3; // 3 parameters
-	*sp = (long)ret;
-	*(sp + 1) = (long)ret->arg;
-	*(sp + 2) = (long)argsize;
-	*--sp = (long)on_meng_main_quit; // return address
-
-	*(long *)(ret->last_context + CONTEXT_RIP_POS) = (long)func;
-	*(long *)(ret->last_context + CONTEXT_RBP_POS) = (long)sp;
-	*(long *)(ret->last_context + CONTEXT_RSP_POS) = (long)sp;
 #elif defined(__aarch64__) || defined(_M_ARM64)
+	// ARM64 AAPCS64
 	uintptr_t sp = (uintptr_t)(ret->stack + stacksize);
 	sp = sp & ~0xFULL;
 
-	*(long *)(ret->last_context + CONTEXT_LR_POS) = (long)func;
+	*(long *)(ret->last_context + CONTEXT_LR_POS) = (long)meng_trampoline;
 	*(long *)(ret->last_context + CONTEXT_FP_POS) = (long)sp;
 	*(long *)(ret->last_context + CONTEXT_SP_POS) = (long)sp;
+#elif defined(__i386__) || defined(_M_IX86)
+	uintptr_t sp = (uintptr_t)(ret->stack + stacksize);
+	sp = (sp & ~0xFULL) - 16;
+
+	*(long *)(ret->last_context + CONTEXT_RIP_POS) = (long)meng_trampoline;
+	*(long *)(ret->last_context + CONTEXT_RSP_POS) = (long)sp;
+	*(long *)(ret->last_context + CONTEXT_RBP_POS) = (long)sp;
 #endif
 
 	return ret;
