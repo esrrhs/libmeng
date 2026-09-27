@@ -1,85 +1,89 @@
-
+.text
 .globl swap_context
+.type swap_context, @function
 swap_context:
 
-	/* rdi, rsi */
+	/* rdi = old_context, rsi = new_context */
 
-	/* save */
-	mov		%RAX, (%rdi)
-	mov		%RBX, 8(%rdi)
-	mov		%RCX, 16(%rdi)
-	mov		%RDX, 24(%rdi)
-	mov		%RSI, 32(%rdi)
-	mov		%RDI, 40(%rdi)
+	/* Save general purpose registers */
+	movq	%rax, 0(%rdi)
+	movq	%rbx, 8(%rdi)
+	movq	%rcx, 16(%rdi)
+	movq	%rdx, 24(%rdi)
+	movq	%rsi, 32(%rdi)
+	movq	%rdi, 40(%rdi)
 	
-	/* RSP */ 
-	lea		8(%rsp),	%RCX
-	mov		%RCX, 48(%rdi)
+	/* RSP: When swap_context was called, (%rsp) has the return address.
+	   The caller's stack pointer before call was (%rsp + 8) */ 
+	leaq	8(%rsp), %rcx
+	movq	%rcx, 48(%rdi)
 
-	mov		%RBP, 56(%rdi)
+	movq	%rbp, 56(%rdi)
 
-	/* EIP */ 
-	mov		(%rsp),	%RCX
-	mov		%RCX, 64(%rdi)
+	/* Return address (RIP) */ 
+	movq	(%rsp), %rcx
+	movq	%rcx, 64(%rdi)
 	
-	mov		%r8, 72(%rdi)
-	mov		%r9, 80(%rdi)
-	mov		%r10, 88(%rdi)
-	mov		%r11, 96(%rdi)
-	mov		%r12, 104(%rdi)
-	mov		%r13, 112(%rdi)
-	mov		%r14, 120(%rdi)
-	mov		%r15, 128(%rdi)
+	movq	%r8,  72(%rdi)
+	movq	%r9,  80(%rdi)
+	movq	%r10, 88(%rdi)
+	movq	%r11, 96(%rdi)
+	movq	%r12, 104(%rdi)
+	movq	%r13, 112(%rdi)
+	movq	%r14, 120(%rdi)
+	movq	%r15, 128(%rdi)
 	
-	movups	%xmm0,  136(%rdi)
-	movups	%xmm1,  152(%rdi)
-	movups	%xmm2,  168(%rdi)
-	movups	%xmm3,  184(%rdi)
-	movups	%xmm4,  200(%rdi)
-	movups	%xmm5,  216(%rdi)
-	movups	%xmm6,  232(%rdi)
-	movups	%xmm7,  248(%rdi)
+	/* Save XMM registers */
+	movdqu	%xmm0, 136(%rdi)
+	movdqu	%xmm1, 152(%rdi)
+	movdqu	%xmm2, 168(%rdi)
+	movdqu	%xmm3, 184(%rdi)
+	movdqu	%xmm4, 200(%rdi)
+	movdqu	%xmm5, 216(%rdi)
+	movdqu	%xmm6, 232(%rdi)
+	movdqu	%xmm7, 248(%rdi)
 	
-	/* load */ 
-	mov		(%rsi),		%RAX  
-	mov		8(%rsi),    %RBX  
-	mov		16(%rsi),	%RCX
-	mov		24(%rsi),   %RDX   
-	mov		40(%rsi),   %RDI  
-	mov		48(%rsi),   %RSP  
-	mov		56(%rsi),   %RBP  
+	/* Restore registers from new_context (%rsi) */ 
+	movq	0(%rsi),   %rax  
+	movq	8(%rsi),   %rbx  
+	movq	16(%rsi),  %rcx
+	movq	24(%rsi),  %rdx   
+	movq	48(%rsi),  %rsp  
+	movq	56(%rsi),  %rbp  
 	
-	mov		72(%rsi),	%r8
-	mov		80(%rsi),   %r9
-	mov		88(%rsi),   %r10
-	mov		96(%rsi),   %r11
-	mov		104(%rsi),  %r12
-	mov		112(%rsi),  %r13
-	mov		120(%rsi),  %r14
-	mov		128(%rsi),  %r15
+	movq	72(%rsi),  %r8
+	movq	80(%rsi),  %r9
+	movq	88(%rsi),  %r10
+	movq	96(%rsi),  %r11
+	movq	104(%rsi), %r12
+	movq	112(%rsi), %r13
+	movq	120(%rsi), %r14
+	movq	128(%rsi), %r15
 	
-	movups	136(%rdi),  %xmm0
-	movups	152(%rdi),  %xmm1
-	movups	168(%rdi),  %xmm2
-	movups	184(%rdi),  %xmm3
-	movups	200(%rdi),  %xmm4
-	movups	216(%rdi),  %xmm5
-	movups	232(%rdi),  %xmm6
-	movups	248(%rdi),  %xmm7
+	/* Restore XMM registers from %rsi */
+	movdqu	136(%rsi), %xmm0
+	movdqu	152(%rsi), %xmm1
+	movdqu	168(%rsi), %xmm2
+	movdqu	184(%rsi), %xmm3
+	movdqu	200(%rsi), %xmm4
+	movdqu	216(%rsi), %xmm5
+	movdqu	232(%rsi), %xmm6
+	movdqu	248(%rsi), %xmm7
 	
-	push	64(%rsi) 
-	mov		32(%rsi),   %RSI
+	/* Push target RIP */
+	pushq	64(%rsi) 
 
-	ret 
+	/* Restore RDI and RSI last so RSI remains valid during earlier reads */
+	movq	40(%rsi), %rdi  
+	movq	32(%rsi), %rsi
+
+	retq
 
 .globl ini_context
+.type ini_context, @function
 ini_context:
+	retq
 
-	ret 
-	
-.globl get_meng
-get_meng:
-
-	mov		8(%rbp),	%rax
-	ret 
-
+#if defined(__linux__) && defined(__ELF__)
+.section .note.GNU-stack,"",@progbits
+#endif

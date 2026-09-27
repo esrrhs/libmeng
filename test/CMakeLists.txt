@@ -1,20 +1,32 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+add_executable(test_basic test_basic.cpp)
+target_link_libraries(test_basic PRIVATE meng)
+add_test(NAME test_basic COMMAND test_basic)
 
-PROJECT(TEST)
-AUX_SOURCE_DIRECTORY(./ TEST_SRC_LIST)
-INCLUDE_DIRECTORIES(./)
-INCLUDE_DIRECTORIES(../include)
-MESSAGE(STATUS "This is cmdcontroller BINARY dir " ${TEST_BINARY_DIR})
-MESSAGE(STATUS "This is cmdcontroller SOURCE dir " ${TEST_SOURCE_DIR})
-MESSAGE(STATUS "This is cmdcontroller SOURCE file " ${TEST_SRC_LIST})
-LINK_DIRECTORIES(${TEST_SOURCE_DIR}/../bin/)
-IF(REMOD)
-SET(CMAKE_CXX_FLAGS "-O3 -Wall -Werror -gdwarf-2 -m64 -DNDEBUG")
-MESSAGE("build release test")
-ELSE()
-SET(CMAKE_CXX_FLAGS "-g3 -O0 -Wall -Werror -gdwarf-2 -m64 -D_DEBUG")
-MESSAGE("build debug test")
-ENDIF()
-SET(EXECUTABLE_OUTPUT_PATH ${TEST_BINARY_DIR}/../bin)
-ADD_EXECUTABLE(test ${TEST_SRC_LIST})
-TARGET_LINK_LIBRARIES(test meng profiler)
+add_executable(test_cpp test_cpp.cpp)
+target_link_libraries(test_cpp PRIVATE meng)
+add_test(NAME test_cpp COMMAND test_cpp)
+
+add_executable(test_legacy test.cpp)
+target_link_libraries(test_legacy PRIVATE meng)
+if(MENG_ENABLE_PROFILER)
+    target_link_libraries(test_legacy PRIVATE profiler)
+    target_compile_definitions(test_legacy PRIVATE MENG_ENABLE_PROFILER)
+endif()
+add_test(NAME test_legacy COMMAND test_legacy)
+
+if(MENG_BUILD_BENCHMARKS)
+    add_executable(benchmark benchmark.cpp)
+    target_link_libraries(benchmark PRIVATE meng)
+endif()
+
+# Set output directory to bin/ in build folder
+set_target_properties(test_basic test_cpp test_legacy
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+if(MENG_BUILD_BENCHMARKS)
+    set_target_properties(benchmark
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    )
+endif()
