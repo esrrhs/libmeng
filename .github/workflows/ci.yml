@@ -87,12 +87,11 @@ jobs:
         run: ./build/bin/benchmark.exe
 
   macos:
-    name: macOS (${{ matrix.os }} - ${{ matrix.build_type }})
-    runs-on: ${{ matrix.os }}
+    name: macOS (Apple Silicon - ${{ matrix.build_type }})
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, macos-13]
         build_type: [Debug, Release]
 
     steps:

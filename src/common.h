@@ -45,8 +45,8 @@ extern "C" meng * get_meng();
 
 #if defined(_WIN32)
 #if defined(__x86_64__) || defined(_M_X64)
-// Windows x64 MinGW
-#define CONTEXT_SIZE (256)
+// Windows x64 MinGW (registers: 240 bytes, TEB limits: 24 bytes)
+#define CONTEXT_SIZE (288)
 #define CONTEXT_RSP_POS (64)
 #define CONTEXT_RIP_POS (72)
 #define CONTEXT_RBP_POS (8)
