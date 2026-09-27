@@ -1,7 +1,13 @@
 .text
 .globl swap_context
+.globl _swap_context
+#if defined(__ELF__)
+.type swap_context, @function
+#elif defined(_WIN32)
 .def swap_context; .scl 2; .type 32; .endef
+#endif
 swap_context:
+_swap_context:
 	/* rcx = old_context, rdx = new_context */
 
 	/* Save callee-saved non-volatile general-purpose registers */
@@ -64,6 +70,12 @@ swap_context:
 	retq
 
 .globl ini_context
+.globl _ini_context
+#if defined(__ELF__)
+.type ini_context, @function
+#elif defined(_WIN32)
 .def ini_context; .scl 2; .type 32; .endef
+#endif
 ini_context:
+_ini_context:
 	retq

@@ -85,3 +85,33 @@ jobs:
         if: matrix.build_type == 'Release'
         shell: msys2 {0}
         run: ./build/bin/benchmark.exe
+
+  macos:
+    name: macOS (${{ matrix.os }} - ${{ matrix.build_type }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, macos-13]
+        build_type: [Debug, Release]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DMENG_BUILD_TESTS=ON \
+            -DMENG_BUILD_BENCHMARKS=ON
+
+      - name: Build
+        run: cmake --build build -j$(sysctl -n hw.ncpu)
+
+      - name: Run Tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Run Benchmark
+        if: matrix.build_type == 'Release'
+        run: ./build/bin/benchmark

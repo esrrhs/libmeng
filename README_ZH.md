@@ -14,7 +14,7 @@
 - **跨平台与多架构支持**：
   - Linux (x86_64, aarch64 / ARM64, GCC / Clang)
   - Windows (x86_64, x86, MinGW-w64)
-  - macOS (x86_64, Apple Silicon / ARM64)
+  - macOS (Apple Silicon ARM64, Intel x86_64, Apple Clang)
 - **双重 API 接口**：
   - **原生 C API** (`meng.h`)：极简、零依赖、100% 向后兼容。
   - **现代 C++ 接口** (`meng.hpp`)：支持 C++11/14/17/20，具备 RAII 自动管理、Lambda 闭包、捕获变量、异常自动捕获与跨协程重新抛出、移动语义。
